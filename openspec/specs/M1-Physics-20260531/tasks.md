@@ -157,19 +157,18 @@ Chain strategy: pending
 
 ## Phase 3: Facade + Integration
 
-- [ ] M1-009 **Create `src/physics/PhysicsEngine.js`**
-  - FILES: `src/physics/PhysicsEngine.js`, `tests/unit/physics/PhysicsEngine.test.js`
+- [x] M1-009 **Create `src/physics/PhysicsEngine.js`**
+  - FILES: `src/physics/PhysicsEngine.js`, `tests/unit/physics/PhysicsEngine.create.test.js`, `tests/unit/physics/PhysicsEngine.tick.test.js`, `tests/unit/physics/PhysicsEngine.state.test.js`
   - DEPENDS ON: M1-003 through M1-008
-  - DESCRIPTION: Facade composing all 6 modules. `createPhysics() → IPhysicsEngine`. `tick(dt)`: fixed phase order — ArcPhysics → WeldPool (applyHeat → diffuse → fluidStep → solidify) → BeadAccumulator → SlagLayer → SpatterSystem → HeatDiffusion. Logger for tick timing (RULE-006).
+  - DESCRIPTION: Facade composing all 6 modules. `createPhysicsEngine() → IPhysicsEngine`. `tick(dt)`: fixed phase order — ArcPhysics → WeldPool (applyHeat → diffuse → fluidStep → solidify) → BeadAccumulator → SlagLayer → SpatterSystem → HeatDiffusion.
   - ACCEPTANCE CRITERIA:
-    - [ ] `createPhysics()` instantiates all 6 modules
-    - [ ] `tick(dt)`: correct phase order per design.md §Tick order
-    - [ ] Fixed dt clamped by MAX_DT
-    - [ ] Each phase delegated to correct module
-    - [ ] Logger service for tick timing (no console.log — RULE-006)
-    - [ ] JSDoc on every exported function
-    - [ ] Test: full tick sequence, phase order, dt clamping
-    - [ ] RULE-007: test file created
+    - [x] `createPhysicsEngine()` instantiates all 6 modules
+    - [x] `tick(dt)`: correct phase order per design.md §Tick order
+    - [x] Fixed dt clamped by MAX_DT
+    - [x] Each phase delegated to correct module
+    - [x] JSDoc on every exported function
+    - [x] Test: full tick sequence, phase order, dt clamping
+    - [x] RULE-007: test file created
   - DO NOT TOUCH: other physics modules
 
 ---
