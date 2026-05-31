@@ -78,27 +78,41 @@ export class ShopScreen {
    */
   _render() {
     if (!this._isOpen) return;
-
-    // Remove existing modal if present
     const existing = document.getElementById('shop-modal');
     if (existing) existing.remove();
+    const modal = this._buildModal();
+    this._bindModalEvents(modal);
+    document.body.appendChild(modal);
+    this._container = modal;
+  }
 
+  /**
+   * Build the modal DOM element with shop HTML.
+   * @private
+   * @returns {HTMLElement}
+   */
+  _buildModal() {
     const credits = this._getCredits();
     const inventory = this._getInventory();
     const categories = ['arc', 'spatter', 'machine'];
-
     const modal = document.createElement('div');
     modal.id = 'shop-modal';
-    modal.innerHTML = `
-      <div class="shop-overlay" style="
-        position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-        display: flex; align-items: center; justify-content: center; z-index: 1000;
-      ">
-        <div class="shop-panel" style="
-          background: #1a1a2e; border: 2px solid #0f3460; border-radius: 12px;
-          padding: 24px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;
-          font-family: 'Segoe UI', sans-serif; color: #eee;
-        ">
+    modal.innerHTML = this._buildShopHTML(credits, inventory, categories);
+    return modal;
+  }
+
+  /**
+   * Build the shop panel HTML string.
+   * @private
+   * @param {number} credits
+   * @param {string[]} inventory
+   * @param {string[]} categories
+   * @returns {string}
+   */
+  _buildShopHTML(credits, inventory, categories) {
+    return `
+      <div class="shop-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:1000;">
+        <div class="shop-panel" style="background:#1a1a2e;border:2px solid #0f3460;border-radius:12px;padding:24px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;font-family:'Segoe UI',sans-serif;color:#eee;">
           <div class="shop-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
             <h2 style="margin:0;font-size:1.5rem;color:#e94560;">Cosmetics Shop</h2>
             <span class="shop-balance" style="color:#f9d923;font-size:1.1rem;">Ȼ ${credits.toLocaleString()}</span>
@@ -116,29 +130,26 @@ export class ShopScreen {
         </div>
       </div>
     `;
+  }
 
-    // Close on overlay click
+  /**
+   * Bind click and interaction events to the modal.
+   * @private
+   * @param {HTMLElement} modal
+   */
+  _bindModalEvents(modal) {
     modal.querySelector('.shop-overlay').addEventListener('click', (e) => {
       if (e.target === modal.querySelector('.shop-overlay')) this.close();
     });
-
-    // Bind item interactions
     modal.querySelectorAll('[data-item-id]').forEach(el => {
       const itemId = el.dataset.itemId;
-
-      // Hover preview
       el.addEventListener('mouseenter', () => this._startPreview(itemId));
       el.addEventListener('mouseleave', () => this._endPreview());
-
-      // Buy button
       const btn = el.querySelector('.buy-btn');
       if (btn && !el.dataset.owned) {
         btn.addEventListener('click', () => this._onBuyClick(itemId));
       }
     });
-
-    document.body.appendChild(modal);
-    this._container = modal;
   }
 
   /**
