@@ -34,6 +34,20 @@ jobs:
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: weldmaster
+          POSTGRES_PASSWORD: weldpass
+          POSTGRES_DB: weldmaster
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -41,8 +55,16 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+      - name: Run database migrations
+        run: |
+          npm install -g pg
+          PGPASSWORD=weldpass psql -h localhost -U weldmaster -d weldmaster -f server/src/db/migrations/001_initial.sql || true
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: Run E2E tests
+        run: npm run test:e2e
+        env:
+          DATABASE_URL: postgresql://weldmaster:weldpass@localhost:5432/weldmaster
 
   build:
     name: Production Build

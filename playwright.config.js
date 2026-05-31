@@ -11,7 +11,12 @@ export default defineConfig({
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ],
-  webServer: {
+  webServer: process.env.CI ? {
+    command: 'npm run build && npx serve public/ -l 3000',
+    url: 'http://localhost:3000',
+    reuseExistingServer: false,
+    timeout: 60000,
+  } : {
     command: 'npx serve public/ -l 3000',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
