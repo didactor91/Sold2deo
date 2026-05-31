@@ -32,7 +32,7 @@ export function createArcPhysics() {
       const heatInput = amperage * voltage * BALANCE.physics.ARC_HEAT_INPUT * dt;
 
       // Status determination
-      const idealArc = 3; // px — mild steel electrode diameter reference
+      const idealArc = BALANCE.arc.IDEAL_ARC_LENGTH;
       const brokenThreshold = idealArc * BALANCE.arc.BROKEN_ARC_FACTOR;
 
       /** @type {'OK'|'broken'|'short'} */

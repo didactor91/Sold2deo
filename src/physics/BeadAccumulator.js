@@ -41,7 +41,14 @@ export function createBeadAccumulator(width) {
 function createColumns(width) {
   const cols = [];
   for (let i = 0; i < width; i++) {
-    cols[i] = { x: i, baseY: 0, height: 0, temperature: 293, hasSlag: false, slagRemoved: false };
+    cols[i] = {
+      x: i,
+      baseY: 0,
+      height: 0,
+      temperature: BALANCE.physics.AMBIENT_TEMP,
+      hasSlag: false,
+      slagRemoved: false,
+    };
   }
   return cols;
 }

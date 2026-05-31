@@ -27,11 +27,12 @@ export const BALANCE = {
   },
 
   arc: {
-    IDEAL_ARC_FACTOR: 1.0, // arc = electrode_diameter
-    BROKEN_ARC_FACTOR: 3.0, // arc > diameter × 3
+    IDEAL_ARC_FACTOR: 1.0,     // arc = electrode_diameter
+    IDEAL_ARC_LENGTH: 3,       // px — reference arc length (electrode diameter reference)
+    BROKEN_ARC_FACTOR: 3.0,    // arc > diameter × 3
     SHORT_CIRCUIT_THRESHOLD: 0.5, // px
-    VOLTAGE_PER_MM: 1.5, // V/mm — AWS standard
-    MIN_ARC_LENGTH: 0.5, // px minimum
+    VOLTAGE_PER_MM: 1.5,       // V/mm — AWS standard
+    MIN_ARC_LENGTH: 0.5,       // px minimum
   },
 
   slag: {

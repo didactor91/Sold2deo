@@ -40,7 +40,8 @@ function initModules() {
  * @returns {number[]} Last HAZ particles from compute()
  */
 function executeTickPhases(modules, dt, mouseY, surfaceY, amperage, electrodeType) {
-  const { arcPhysics, weldPool, beadAccumulator, slagLayer, spatterSystem, heatDiffusion } = modules;
+  const { arcPhysics, weldPool, beadAccumulator, slagLayer, spatterSystem, heatDiffusion } =
+    modules;
   const clampedDt = Math.min(dt, BALANCE.tick.MAX_DT);
 
   // Phase 1: ArcPhysics → arc state

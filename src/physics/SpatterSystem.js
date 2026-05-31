@@ -8,7 +8,16 @@ import { BALANCE } from '../config/balance.js';
 function createParticlePool(size) {
   const particles = [];
   for (let i = 0; i < size; i++) {
-    particles.push({ x: 0, y: 0, vx: 0, vy: 0, life: 0, active: false, stuck: false, bounced: false });
+    particles.push({
+      x: 0,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      life: 0,
+      active: false,
+      stuck: false,
+      bounced: false,
+    });
   }
   return particles;
 }

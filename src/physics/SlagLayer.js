@@ -20,7 +20,10 @@ export function createSlagLayer(beadColumns) {
   function age(dt) {
     for (const seg of segments) {
       if (!seg.removed) {
-        seg.hardness = Math.min(BALANCE.slag.HARDNESS_MAX, seg.hardness + BALANCE.slag.HARDNESS_GROWTH_RATE * dt);
+        seg.hardness = Math.min(
+          BALANCE.slag.HARDNESS_MAX,
+          seg.hardness + BALANCE.slag.HARDNESS_GROWTH_RATE * dt
+        );
       }
     }
   }
