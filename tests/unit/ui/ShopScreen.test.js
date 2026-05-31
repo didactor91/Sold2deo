@@ -1,126 +1,143 @@
 /**
  * ShopScreen Unit Tests
- * Tests shop business logic (state, purchase flow) separate from DOM rendering.
  * @module tests/unit/ui/ShopScreen.test.js
+ *
+ * Note: Full DOM rendering tests require jsdom environment.
+ * These tests focus on non-DOM methods and basic state management.
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { COSMETICS_CATALOG, getCosmeticsByCategory } from '@src/config/cosmetics.js';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { ShopScreen } from '../../../src/ui/ShopScreen.js';
 
-/**
- * ShopScreen test helper — creates a mock shop instance without DOM.
- * @param {Object} opts
- */
-function createMockShop(opts = {}) {
-  const { credits = 500, ownedCosmetics = [] } = opts;
-  return {
-    _credits: credits,
-    _ownedCosmetics: [...ownedCosmetics],
-    _onPurchase: vi.fn(),
-    _onPreview: vi.fn(),
-  };
-}
+describe('ShopScreen', () => {
+  let shop;
+  let mockEventBus;
+  let mockGetCredits;
+  let mockSetCredits;
+  let mockGetInventory;
+  let mockPurchaseCosmetic;
+  let mockOnEquipCosmetic;
+  let mockOnError;
 
-describe('ShopScreen business logic', () => {
-  describe('cosmetic catalog', () => {
-    it('catalog has 10 items', () => {
-      expect(COSMETICS_CATALOG).toHaveLength(10);
-    });
+  beforeEach(() => {
+    mockEventBus = { emit: vi.fn() };
+    mockGetCredits = vi.fn(() => 500);
+    mockSetCredits = vi.fn();
+    mockGetInventory = vi.fn(() => []);
+    mockPurchaseCosmetic = vi.fn(async () => ({ success: true, newBalance: 400 }));
+    mockOnEquipCosmetic = vi.fn();
+    mockOnError = vi.fn();
 
-    it('items are frozen', () => {
-      expect(Object.isFrozen(COSMETICS_CATALOG)).toBe(true);
-    });
-
-    it('all prices are positive', () => {
-      COSMETICS_CATALOG.forEach(item => {
-        expect(item.price).toBeGreaterThan(0);
-      });
-    });
-
-    it('all categories are valid', () => {
-      const valid = ['arc', 'spatter', 'machine'];
-      COSMETICS_CATALOG.forEach(item => {
-        expect(valid).toContain(item.category);
-      });
+    shop = new ShopScreen({
+      eventBus: mockEventBus,
+      getCredits: mockGetCredits,
+      setCredits: mockSetCredits,
+      getInventory: mockGetInventory,
+      purchaseCosmetic: mockPurchaseCosmetic,
+      onEquipCosmetic: mockOnEquipCosmetic,
+      onError: mockOnError,
     });
   });
 
-  describe('getCosmeticsByCategory()', () => {
-    it('returns only arc items for arc category', () => {
-      const arc = getCosmeticsByCategory('arc');
-      expect(arc.every(c => c.category === 'arc')).toBe(true);
+  describe('constructor', () => {
+    it('initializes with default options', () => {
+      const shopWithDefaults = new ShopScreen();
+      expect(shopWithDefaults.isOpen()).toBe(false);
     });
 
-    it('returns 4 arc items', () => {
-      const arc = getCosmeticsByCategory('arc');
-      expect(arc).toHaveLength(4);
+    it('stores provided callbacks', () => {
+      expect(shop._getCredits).toBe(mockGetCredits);
+      expect(shop._setCredits).toBe(mockSetCredits);
+      expect(shop._getInventory).toBe(mockGetInventory);
+      expect(shop._purchaseCosmetic).toBe(mockPurchaseCosmetic);
+      expect(shop._onEquipCosmetic).toBe(mockOnEquipCosmetic);
+      expect(shop._onError).toBe(mockOnError);
     });
 
-    it('returns 3 spatter items', () => {
-      const spatter = getCosmeticsByCategory('spatter');
-      expect(spatter).toHaveLength(3);
+    it('initializes isOpen to false', () => {
+      expect(shop._isOpen).toBe(false);
     });
 
-    it('returns 3 machine items', () => {
-      const machine = getCosmeticsByCategory('machine');
-      expect(machine).toHaveLength(3);
-    });
-  });
-
-  describe('canAfford()', () => {
-    it('returns true when credits >= price', () => {
-      const shop = createMockShop({ credits: 500 });
-      const canAfford = (price) => shop._credits >= price;
-      expect(canAfford(100)).toBe(true);
-      expect(canAfford(500)).toBe(true);
-    });
-
-    it('returns false when credits < price', () => {
-      const shop = createMockShop({ credits: 50 });
-      const canAfford = (price) => shop._credits >= price;
-      expect(canAfford(100)).toBe(false);
+    it('initializes previewId to null', () => {
+      expect(shop._previewId).toBeNull();
     });
   });
 
-  describe('isOwned()', () => {
-    it('returns true for owned item', () => {
-      const shop = createMockShop({ ownedCosmetics: ['arc-blue-glow'] });
-      const isOwned = (id) => shop._ownedCosmetics.includes(id);
-      expect(isOwned('arc-blue-glow')).toBe(true);
-    });
-
-    it('returns false for unowned item', () => {
-      const shop = createMockShop({ ownedCosmetics: ['arc-blue-glow'] });
-      const isOwned = (id) => shop._ownedCosmetics.includes(id);
-      expect(isOwned('spatter-fire')).toBe(false);
+  describe('isOpen', () => {
+    it('returns false initially', () => {
+      expect(shop.isOpen()).toBe(false);
     });
   });
 
-  describe('purchase flow', () => {
-    it('purchase calls onPurchase with item id and new balance', () => {
-      const shop = createMockShop({ credits: 500, ownedCosmetics: [] });
-      const item = COSMETICS_CATALOG.find(c => c.id === 'arc-blue-glow');
-      const newBalance = shop._credits - item.price;
-      shop._onPurchase(item.id, newBalance);
-      expect(shop._onPurchase).toHaveBeenCalledWith('arc-blue-glow', 400);
+  describe('_getPreviewColor', () => {
+    it('returns correct color for blue-glow', () => {
+      const color = shop._getPreviewColor('arc', 'blue-glow');
+      expect(color).toBe('#0077ff');
     });
 
-    it('duplicate purchase does not double-deduct', () => {
-      const shop = createMockShop({ credits: 500, ownedCosmetics: ['arc-blue-glow'] });
-      // Simulate purchase attempt for already-owned item
-      const item = COSMETICS_CATALOG.find(c => c.id === 'arc-blue-glow');
-      if (shop._ownedCosmetics.includes(item.id)) {
-        // Already owned — no action needed
-        shop._onPurchase(item.id, shop._credits);
-      }
-      // Credits unchanged since it was already owned
-      expect(shop._credits).toBe(500);
+    it('returns correct color for red-arc', () => {
+      const color = shop._getPreviewColor('arc', 'red-arc');
+      expect(color).toBe('#ff3333');
     });
 
-    it('credit update after purchase reflected in shop state', () => {
-      const shop = createMockShop({ credits: 500 });
-      const item = COSMETICS_CATALOG.find(c => c.id === 'arc-blue-glow');
-      shop._credits -= item.price;
-      expect(shop._credits).toBe(400);
+    it('returns correct color for green-arc', () => {
+      const color = shop._getPreviewColor('arc', 'green-arc');
+      expect(color).toBe('#33cc33');
+    });
+
+    it('returns correct color for purple-arc', () => {
+      const color = shop._getPreviewColor('arc', 'purple-arc');
+      expect(color).toBe('#9933ff');
+    });
+
+    it('returns correct color for fire-spatter', () => {
+      const color = shop._getPreviewColor('spatter', 'fire-spatter');
+      expect(color).toBe('#ff6600');
+    });
+
+    it('returns correct color for snow-spatter', () => {
+      const color = shop._getPreviewColor('spatter', 'snow-spatter');
+      expect(color).toBe('#e6f2ff');
+    });
+
+    it('returns correct color for toxic-spatter', () => {
+      const color = shop._getPreviewColor('spatter', 'toxic-spatter');
+      expect(color).toBe('#33cc33');
+    });
+
+    it('returns correct color for chrome', () => {
+      const color = shop._getPreviewColor('machine', 'chrome');
+      expect(color).toBe('#d9d9d9');
+    });
+
+    it('returns correct color for rust', () => {
+      const color = shop._getPreviewColor('machine', 'rust');
+      expect(color).toBe('#cc6633');
+    });
+
+    it('returns correct color for gold', () => {
+      const color = shop._getPreviewColor('machine', 'gold');
+      expect(color).toBe('#ffd700');
+    });
+
+    it('returns grey for unknown effectId', () => {
+      const color = shop._getPreviewColor('arc', 'unknown-effect');
+      expect(color).toBe('#888');
+    });
+  });
+
+  describe('_startPreview', () => {
+    it('sets previewId and calls onEquipCosmetic', () => {
+      shop._startPreview('blue-glow');
+      expect(shop._previewId).toBe('blue-glow');
+      expect(mockOnEquipCosmetic).toHaveBeenCalledWith('blue-glow');
+    });
+  });
+
+  describe('_endPreview', () => {
+    it('clears previewId', () => {
+      shop._previewId = 'blue-glow';
+      shop._endPreview();
+      expect(shop._previewId).toBeNull();
     });
   });
 });

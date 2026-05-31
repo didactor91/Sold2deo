@@ -16,12 +16,13 @@
     "build": "esbuild src/main.js --bundle --outfile=public/bundle.js --minify"
   },
   "devDependencies": {
-    "vitest": "^1.4.0",
-    "@vitest/coverage-v8": "^1.4.0",
-    "playwright": "^1.42.0",
     "@playwright/test": "^1.42.0",
+    "@vitest/coverage-v8": "^1.4.0",
+    "esbuild": "^0.20.0",
     "eslint": "^8.57.0",
+    "playwright": "^1.42.0",
     "prettier": "^3.2.0",
-    "esbuild": "^0.20.0"
+    "vitest": "^1.4.0",
+    "zod": "^4.4.3"
   }
 }
