@@ -5,9 +5,6 @@
 
 import { BALANCE } from '../config/balance.js';
 
-const AMBIENT_TEMP = 293;
-const MAX_TEMP = 2800;
-
 /**
  * Compute one diffusion step on the grid.
  * @param {Array<Array<Object>>} grid
@@ -26,9 +23,12 @@ export function computeDiffusionStep(grid, cols, rows, alpha, dt) {
       const e = tempCopy[c + 1][r];
       const w = tempCopy[c - 1][r];
       const center = tempCopy[c][r];
-      const diffusion = alpha * dt * (n + s + e + w - 4 * center) / (dx * dx);
+      const diffusion = (alpha * dt * (n + s + e + w - 4 * center)) / (dx * dx);
       const newTemp = center + diffusion;
-      grid[c][r].temperature = Math.max(AMBIENT_TEMP, Math.min(MAX_TEMP, newTemp));
+      grid[c][r].temperature = Math.max(
+        BALANCE.physics.AMBIENT_TEMP,
+        Math.min(BALANCE.physics.MAX_TEMP, newTemp)
+      );
       updateLiquidSolid(grid[c][r]);
     }
   }

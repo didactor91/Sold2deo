@@ -54,7 +54,7 @@ function clampNegativeHeights(columns, width) {
 
 function depositToColumn(column, poolColumn, dt) {
   const heightPerAmp = BALANCE.bead.HEIGHT_PER_AMP;
-  const typicalAmperage = 100;
+  const typicalAmperage = BALANCE.bead.TYPICAL_AMPERAGE;
 
   // Find top-most liquid cell
   for (let r = 0; r < poolColumn.length; r++) {

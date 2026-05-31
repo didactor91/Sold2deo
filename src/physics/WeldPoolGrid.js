@@ -3,7 +3,7 @@
  * @module physics/WeldPoolGrid
  */
 
-const AMBIENT_TEMP = 293;
+import { BALANCE } from '../config/balance.js';
 
 /**
  * Initialize a 2D grid of PoolCells.
@@ -17,7 +17,7 @@ export function initializeGrid(cols, rows) {
     grid[c] = [];
     for (let r = 0; r < rows; r++) {
       grid[c][r] = {
-        temperature: AMBIENT_TEMP,
+        temperature: BALANCE.physics.AMBIENT_TEMP,
         mass: 0,
         solid: true,
         liquid: false,

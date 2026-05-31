@@ -7,9 +7,9 @@ import { BALANCE } from '../config/balance.js';
 import { initializeGrid } from './WeldPoolGrid.js';
 import { computeDiffusionStep } from './WeldPoolDiffusion.js';
 
-function applyHeatToCell(cell, heatInput, maxDt) {
-  const deltaT = (heatInput * maxDt) / 100;
-  cell.temperature = Math.min(2800, cell.temperature + deltaT);
+function applyHeatToCell(cell, heatInput, dt) {
+  const deltaT = (heatInput * dt) / 100;
+  cell.temperature = Math.min(BALANCE.physics.MAX_TEMP, cell.temperature + deltaT);
   if (cell.temperature >= BALANCE.physics.LIQUIDUS_TEMP) {
     cell.liquid = true;
     cell.solid = false;
@@ -63,7 +63,7 @@ export function createWeldPool(cols, rows) {
   /** @param {number} col @param {number} row @param {number} heatInput @param {number} dt */
   function applyHeat(col, row, heatInput, dt) {
     if (col < 0 || col >= cols || row < 0 || row >= rows) return;
-    applyHeatToCell(grid[col][row], heatInput, maxDt);
+    applyHeatToCell(grid[col][row], heatInput, dt);
   }
 
   /** @param {number} dt */
