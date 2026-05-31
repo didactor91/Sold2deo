@@ -53,39 +53,59 @@ export class MachinePanel {
    * Render the machine panel DOM element
    * @returns {HTMLElement}
    */
-  render() {
-    const container = document.createElement('div');
-    container.className = 'machine-panel';
-    container.innerHTML = `
-      <h3>Machine Controls</h3>
-      <div class="control-group">
-        <label for="heat">Heat</label>
-        <input type="range" id="heat" min="0" max="100" value="${this._heat}" />
-        <span class="value">${this._heat}%</span>
-      </div>
-      <div class="control-group">
-        <label for="speed">Speed</label>
-        <input type="range" id="speed" min="0" max="100" value="${this._speed}" />
-        <span class="value">${this._speed}%</span>
-      </div>
-      <div class="control-group">
-        <label for="wireFeed">Wire Feed</label>
-        <input type="range" id="wireFeed" min="0" max="100" value="${this._wireFeed}" />
-        <span class="value">${this._wireFeed}%</span>
-      </div>
-    `;
+  /**
+   * Mount MachinePanel to existing #machine-panel DOM.
+   * @returns {HTMLElement|null}
+   */
+  mount() {
+    const container = document.getElementById('machine-panel');
+    if (!container) return null;
 
-    // Attach event listeners
-    container.querySelectorAll('input[type="range"]').forEach(input => {
-      input.addEventListener('input', (e) => {
-        const param = e.target.id;
-        const value = parseInt(e.target.value, 10);
-        this.setParameter(param, value);
-        e.target.nextElementSibling.textContent = `${value}%`;
+    // Wire up power button
+    const powerBtn = document.getElementById('power-btn');
+    if (powerBtn) {
+      powerBtn.addEventListener('click', () => {
+        const isOn = powerBtn.classList.toggle('on');
+        this._eventBus?.emit('machine:power', { on: isOn });
+      });
+    }
+
+    // Wire up amp slider
+    const ampSlider = document.getElementById('amp-slider');
+    const ampValue = document.getElementById('amp-value');
+    if (ampSlider) {
+      ampSlider.addEventListener('input', () => {
+        const amp = parseInt(ampSlider.value, 10);
+        if (ampValue) ampValue.textContent = `${amp} A`;
+        this._heat = amp;
+        this._eventBus?.emit('machine:amperage', { value: amp });
+      });
+    }
+
+    // Wire up electrode buttons
+    container.querySelectorAll('.electrode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.electrode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this._eventBus?.emit('machine:electrode', { type: btn.dataset.electrode });
       });
     });
 
     this._container = container;
     return container;
+  }
+
+  /**
+   * Update duty cycle display.
+   * @param {number} percent - 0-100
+   */
+  updateDutyCycle(percent) {
+    const fill = document.getElementById('duty-fill');
+    const value = document.getElementById('duty-value');
+    if (fill) {
+      fill.style.width = `${percent}%`;
+      fill.classList.toggle('hot', percent > 70);
+    }
+    if (value) value.textContent = `${Math.round(percent)}%`;
   }
 }

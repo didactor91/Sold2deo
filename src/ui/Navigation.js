@@ -68,24 +68,23 @@ export class Navigation {
   }
 
   /**
-   * Render the navigation container
-   * @returns {HTMLElement}
+   * Mount Navigation to existing #nav-bar DOM.
+   * @returns {HTMLElement|null}
    */
-  render() {
-    const container = document.createElement('div');
-    container.className = 'navigation';
-    container.innerHTML = `
-      <nav class="nav-tabs">
-        <button data-screen="IdleFactory">Idle Factory</button>
-        <button data-screen="ShopScreen">Shop</button>
-        <button data-screen="WeldSession">Weld</button>
-      </nav>
-      <div class="screen-container"></div>
-    `;
+  mount() {
+    const container = document.getElementById('nav-bar');
+    if (!container) return null;
 
-    container.querySelectorAll('button').forEach(btn => {
+    container.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        this.navigate(btn.dataset.screen);
+        const screen = btn.dataset.screen;
+        // Update active state
+        container.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // Show relevant panel
+        document.getElementById('game-viewport').style.display = screen === 'weld' ? 'flex' : 'none';
+        document.getElementById('idle-container').style.display = screen === 'factory' ? 'block' : 'none';
+        document.getElementById('shop-container').style.display = screen === 'shop' ? 'block' : 'none';
       });
     });
 

@@ -28,7 +28,7 @@ const audioEngine = new AudioEngine(eventBus);
 /** @type {HTMLCanvasElement} */
 const canvas = document.createElement('canvas');
 canvas.id = 'game-canvas';
-document.getElementById('game-container').appendChild(canvas);
+document.getElementById('game-viewport').appendChild(canvas);
 
 /** @type {SceneRenderer} */
 const renderer = new SceneRenderer(canvas.getContext('2d'), eventBus);
@@ -45,14 +45,10 @@ const hud = new HUD({ eventBus, stateManager });
 /** @type {Navigation} */
 const navigation = new Navigation({ eventBus });
 
-// Append UI components to game container
-const gameContainer = document.getElementById('game-container');
-if (gameContainer) {
-  const hudEl = hud.render();
-  const machineEl = machinePanel.render();
-  gameContainer.appendChild(hudEl);
-  gameContainer.appendChild(machineEl);
-}
+// Mount UI components to existing DOM
+machinePanel.mount();
+hud.mount();
+navigation.mount();
 
 // Load saved game if exists
 saveManager.load();

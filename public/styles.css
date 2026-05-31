@@ -1,0 +1,574 @@
+/* Weld Master — Industrial Dark Theme */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Brand */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-panel: #1a1a1a;
+  --bg-panel-border: #2a2a2a;
+
+  /* Industrial accents */
+  --accent-orange: #ff6b35;
+  --accent-yellow: #f7c948;
+  --accent-blue: #4488ff;
+  --accent-green: #44ff88;
+  --accent-red: #ff4444;
+
+  /* Text */
+  --text-primary: #e8e8e8;
+  --text-secondary: #888888;
+  --text-muted: #555555;
+
+  /* Typography */
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  --font-display: 'Segoe UI', system-ui, sans-serif;
+
+  /* Sizes */
+  --machine-panel-width: 220px;
+  --hud-height: 48px;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Game Shell ──────────────────────────────────────── */
+
+#game-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── HUD Bar ─────────────────────────────────────────── */
+
+#hud {
+  flex: 0 0 var(--hud-height);
+  background: var(--bg-panel);
+  border-bottom: 2px solid var(--bg-panel-border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 24px;
+  z-index: 100;
+}
+
+#hud-brand {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-orange);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+#hud-stats {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+
+.hud-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.hud-stat-label {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 10px;
+}
+
+.hud-stat-value {
+  font-family: var(--font-mono);
+  color: var(--accent-yellow);
+  font-weight: 600;
+}
+
+.hud-stat-value--xp { color: var(--accent-blue); }
+.hud-stat-value--level { color: var(--accent-green); }
+.hud-stat-value--credits { color: var(--accent-yellow); }
+
+/* ─── Workspace ──────────────────────────────────────── */
+
+#workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ─── Machine Panel ──────────────────────────────────── */
+
+#machine-panel {
+  width: var(--machine-panel-width);
+  flex: 0 0 var(--machine-panel-width);
+  background: var(--bg-panel);
+  border-right: 2px solid var(--bg-panel-border);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.panel-section {
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-panel-border);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.panel-section-title {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--bg-panel-border);
+  padding-bottom: 4px;
+}
+
+/* Power toggle */
+.power-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.power-btn {
+  width: 52px;
+  height: 28px;
+  border-radius: 14px;
+  border: 2px solid var(--bg-panel-border);
+  background: var(--bg-primary);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.power-btn.on {
+  background: var(--accent-green);
+  border-color: var(--accent-green);
+}
+
+.power-btn::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s ease;
+}
+
+.power-btn.on::after {
+  transform: translateX(24px);
+}
+
+/* Sliders */
+.slider-control {
+  margin-bottom: 10px;
+}
+
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.slider-label-text { color: var(--text-secondary); }
+.slider-label-value {
+  font-family: var(--font-mono);
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-orange);
+  border: 2px solid var(--bg-panel);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Duty cycle bar */
+.duty-bar {
+  height: 8px;
+  background: var(--bg-primary);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.duty-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-green), var(--accent-yellow));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.duty-bar-fill.hot {
+  background: linear-gradient(90deg, var(--accent-orange), var(--accent-red));
+}
+
+/* Electrode selector */
+.electrode-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.electrode-btn {
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--bg-panel-border);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.electrode-btn:hover {
+  border-color: var(--accent-orange);
+  color: var(--text-primary);
+}
+
+.electrode-btn.active {
+  border-color: var(--accent-orange);
+  background: rgba(255, 107, 53, 0.15);
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+
+.electrode-btn .electrode-code {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+/* ─── Game Viewport ──────────────────────────────────── */
+
+#game-viewport {
+  flex: 1;
+  position: relative;
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #0d0d0d;
+}
+
+/* Arc glow overlay */
+#arc-glow-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Chip mode cursor */
+body.chip-mode {
+  cursor: crosshair;
+}
+
+/* ─── Side Panels (overlays) ─────────────────────────── */
+
+.panel-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 320px;
+  background: var(--bg-panel);
+  border-left: 2px solid var(--bg-panel-border);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  z-index: 200;
+  overflow-y: auto;
+}
+
+.panel-overlay.open {
+  transform: translateX(0);
+}
+
+/* ─── Navigation ──────────────────────────────────────── */
+
+#nav-bar {
+  display: flex;
+  gap: 4px;
+}
+
+.nav-btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--bg-panel-border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.nav-btn:hover {
+  border-color: var(--accent-orange);
+  color: var(--text-primary);
+}
+
+.nav-btn.active {
+  background: var(--accent-orange);
+  border-color: var(--accent-orange);
+  color: #000;
+}
+
+/* ─── Alerts ──────────────────────────────────────────── */
+
+.alert {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-red);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 1000;
+  animation: alert-in 0.2s ease;
+}
+
+@keyframes alert-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ─── Shop Modal ──────────────────────────────────────── */
+
+#shop-modal .shop-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+}
+
+#shop-modal .shop-panel {
+  background: var(--bg-panel);
+  border: 2px solid var(--accent-orange);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 640px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#shop-modal .shop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#shop-modal h2 {
+  font-size: 1.4rem;
+  color: var(--accent-orange);
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+
+#shop-modal .shop-balance {
+  color: var(--accent-yellow);
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+}
+
+#shop-modal .shop-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#shop-modal .shop-category h3 {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--bg-panel-border);
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+#shop-modal .shop-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+#shop-modal .shop-item {
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-panel-border);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+#shop-modal .shop-item:hover {
+  border-color: var(--accent-orange);
+  transform: translateY(-2px);
+}
+
+#shop-modal .shop-item[data-owned="true"] {
+  border-color: var(--accent-green);
+  opacity: 0.7;
+}
+
+#shop-modal .item-preview {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+}
+
+#shop-modal .item-name {
+  font-size: 12px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+#shop-modal .item-price {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-yellow);
+}
+
+#shop-modal .buy-btn {
+  width: 100%;
+  margin-top: 6px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  border: none;
+  background: var(--accent-orange);
+  color: #000;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#shop-modal .buy-btn:hover:not(:disabled) {
+  background: var(--accent-yellow);
+}
+
+#shop-modal .buy-btn:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* ─── Idle Factory ───────────────────────────────────── */
+
+#idle-factory {
+  padding: 16px;
+}
+
+.idle-section {
+  margin-bottom: 20px;
+}
+
+.idle-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--bg-panel-border);
+  padding-bottom: 4px;
+}
+
+.bot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bot-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-panel-border);
+  border-radius: 6px;
+}
+
+.bot-info { display: flex; flex-direction: column; gap: 2px; }
+.bot-name { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+.bot-stats { font-size: 10px; color: var(--text-muted); }
+.bot-cost { font-family: var(--font-mono); font-size: 11px; color: var(--accent-yellow); }
+
+/* ─── Scrollbar ──────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb {
+  background: var(--bg-panel-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: #444; }

@@ -54,23 +54,34 @@ export class HUD {
   }
 
   /**
-   * Render the HUD DOM element
-   * @returns {HTMLElement}
+   * Mount HUD — attaches to existing #hud DOM element.
+   * @returns {HTMLElement|null}
    */
-  render() {
+  mount() {
+    this._container = document.getElementById('hud');
+    if (this._container) {
+      this._updateFromState();
+    }
+    return this._container;
+  }
+
+  /**
+   * Update HUD from current state manager state.
+   * @private
+   */
+  _updateFromState() {
     const state = this._stateManager ? this._stateManager.getState() : {};
+    const statLevel = document.getElementById('stat-level');
+    const statXp = document.getElementById('stat-xp');
+    const statCredits = document.getElementById('stat-credits');
+    const statQuality = document.getElementById('stat-quality');
 
-    const container = document.createElement('div');
-    container.className = 'hud';
-    container.innerHTML = `
-      <div class="hud-stats">
-        <div class="hud-item hud-credits">${state.credits ?? 0}Ȼ</div>
-        <div class="hud-item hud-bots">Bots: ${(state.activeBots ?? []).length}</div>
-        <div class="hud-item hud-contract">${state.activeContract ? `Contract: ${state.activeContract.id}` : 'No active contract'}</div>
-      </div>
-    `;
-
-    this._container = container;
-    return container;
+    if (statCredits) statCredits.textContent = `${(state.credits ?? 0).toLocaleString()}`;
+    if (statXp) statXp.textContent = `${(state.xp ?? 0).toLocaleString()}`;
+    if (statLevel) statLevel.textContent = state.level ?? 1;
+    if (statQuality) {
+      const q = state.session?.quality ?? null;
+      statQuality.textContent = q !== null ? `${Math.round(q * 100)}%` : '—';
+    }
   }
 }
