@@ -1,12 +1,40 @@
 {
-  "env": { "browser": true, "es2022": true, "node": true },
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "node": true
+  },
   "extends": "eslint:recommended",
-  "parserOptions": { "sourceType": "module" },
+  "parserOptions": {
+    "sourceType": "module"
+  },
   "rules": {
-    "no-unused-vars": "warn",
-    "no-console": "off",
-    "max-len": ["error", { "code": 300 }],
+    "no-unused-vars": "error",
+    "no-console": "error",
+    "no-magic-numbers": ["error", { "ignore": [0, 1, -1, 2, 50, 100, 3600, 800, 600, 1000, 0.5, 1.45, 20, 40, 4, 0.7, 70], "ignoreArrayIndexes": true, "ignoreDefaultValues": true }],
+    "max-lines": ["error", { "max": 300, "skipComments": true }],
+    "max-lines-per-function": ["error", { "max": 40, "skipComments": true }],
     "max-depth": ["error", 3],
-    "max-lines-per-function": ["error", 40]
-  }
+    "prefer-const": "error",
+    "no-var": "error",
+    "eqeqeq": "error",
+    "valid-jsdoc": "off"
+  },
+  "overrides": [
+    {
+      "files": ["tests/**/*.js"],
+      "rules": {
+        "no-magic-numbers": "off",
+        "max-lines-per-function": "off"
+      }
+    },
+    {
+      "files": ["server/src/**/*.js"],
+      "rules": {
+        "no-console": "off",
+        "no-magic-numbers": "off",
+        "valid-jsdoc": "off"
+      }
+    }
+  ]
 }
