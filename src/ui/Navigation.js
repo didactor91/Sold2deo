@@ -38,6 +38,7 @@ export class Navigation {
    */
   navigate(screenName) {
     if (!this._screens.has(screenName)) {
+      // eslint-disable-next-line no-console
       console.warn(`Screen '${screenName}' not registered`);
       return false;
     }

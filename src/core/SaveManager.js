@@ -101,6 +101,7 @@ export class SaveManager {
       this._eventBus.emit('stateLoaded', saveData);
       return true;
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error('Failed to load save:', e);
       return false;
     }

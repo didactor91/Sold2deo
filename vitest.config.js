@@ -12,6 +12,12 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       include: ['src/**/*.js', 'server/src/**/*.js'],
       exclude: ['src/types/**'],
+      thresholds: {
+        lines: 90,
+        functions: 90,
+        branches: 85,
+        statements: 90,
+      },
     },
     bench: { reportMedian: true, reportPercentiles: true },
   },
