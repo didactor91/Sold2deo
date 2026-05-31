@@ -66,4 +66,21 @@ export const BALANCE = {
     MAX_POOL_COLS: 64, // default grid
     MAX_POOL_ROWS: 32, // default grid
   },
+
+  scoring: {
+    // Component weights (must sum to 1.0)
+    WEIGHT_AMPERAGE: 0.30,
+    WEIGHT_ARC: 0.25,
+    WEIGHT_SPEED: 0.20,
+    WEIGHT_STRAIGHTNESS: 0.15,
+    WEIGHT_SLAG: 0.10,
+    // Defect penalties (multiplicative)
+    PENALTY_POROSITY: 0.15,
+    PENALTY_UNDERCUT: 0.20,
+    PENALTY_INCLUSION: 0.40,
+    PENALTY_ARC_BREAK: 0.10,
+    // Reward base values
+    BASE_XP: 100,
+    BASE_CREDITS: 50,
+  },
 };

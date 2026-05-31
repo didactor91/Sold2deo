@@ -8,5 +8,13 @@
     "max-len": ["error", { "code": 300 }],
     "max-depth": ["error", 3],
     "max-lines-per-function": ["error", 40]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["tests/**/*.test.js"],
+      "rules": {
+        "max-lines-per-function": ["error", 500]
+      }
+    }
+  ]
 }

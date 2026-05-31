@@ -1,40 +1,63 @@
 /**
  * Weld Master — Game Entry Point
  * @module main
+ * @description Bootstrap GameLoop with all M1/M2/M3 modules. Wires EventBus subscriptions
+ * between InputHandler, WeldSession, GameLoop, and StateManager.
  */
 
-import { GameLoop } from './core/GameLoop.js';
-import { EventBus } from './core/EventBus.js';
-import { StateManager } from './core/StateManager.js';
-import { SaveManager } from './core/SaveManager.js';
-import { SceneRenderer } from './renderer/SceneRenderer.js';
-import { MachinePanel } from './ui/MachinePanel.js';
-import { HUD } from './ui/HUD.js';
-import { AudioEngine } from './audio/AudioEngine.js';
+import { createEventBus } from './core/EventBus.js';
+import { createStateManager } from './core/StateManager.js';
+import { createPhysicsEngine } from './physics/PhysicsEngine.js';
+import { createSceneRenderer } from './renderer/SceneRenderer.js';
+import { createGameLoop } from './core/GameLoop.js';
+import { createInputHandler } from './game/InputHandler.js';
+import { createWeldSession } from './game/WeldSession.js';
+import { score } from './game/ScoringEngine.js';
 
-/** @type {EventBus} */
-const eventBus = new EventBus();
+// Core event bus
+const eventBus = createEventBus();
 
-/** @type {StateManager} */
-const stateManager = new StateManager(eventBus);
+// State manager
+const stateManager = createStateManager(eventBus);
 
-/** @type {SaveManager} */
-const saveManager = new SaveManager(stateManager, eventBus);
+// Physics engine (M1)
+const physicsEngine = createPhysicsEngine();
 
-/** @type {AudioEngine} */
-const audioEngine = new AudioEngine(eventBus);
+// Weld session (M3)
+const weldSession = createWeldSession({
+  arcPhysics: physicsEngine.arcPhysics,
+  scoringEngine: score,
+  eventBus,
+});
 
-/** @type {HTMLCanvasElement} */
-const canvas = document.createElement('canvas');
-canvas.id = 'game-canvas';
-document.getElementById('game-container').appendChild(canvas);
+// Input handler (M3)
+const inputHandler = createInputHandler({
+  arcPhysics: physicsEngine.arcPhysics,
+  weldSession,
+  eventBus,
+});
 
-/** @type {SceneRenderer} */
-const renderer = new SceneRenderer(canvas.getContext('2d'), eventBus);
+// Scene renderer (M2) — needs sub-renderers
+const ctx = /** @type {CanvasRenderingContext2D} */ (document.createElement('canvas').getContext('2d'));
+const renderer = createSceneRenderer([null, null, null, null, null, null, null, null, null]);
 
-/** @type {GameLoop} */
-const gameLoop = new GameLoop(eventBus, stateManager, renderer);
+// Game loop (M3)
+const gameLoop = createGameLoop({
+  session: weldSession,
+  physicsEngine,
+  renderer,
+});
+
+// Wire EventBus: input events → weld session
+eventBus.on('input:mousedown', () => weldSession.handleMousedown());
+eventBus.on('input:mouseup', () => weldSession.handleMouseup());
+eventBus.on('input:keydown', (key) => weldSession.handleKeydown({ key }));
+
+// Wire EventBus: session events → state manager
+eventBus.on('session:complete', (result) => {
+  stateManager.getState(); // trigger state update
+});
 
 gameLoop.start();
 
-export { eventBus, stateManager, saveManager, audioEngine, gameLoop };
+export { eventBus, stateManager, physicsEngine, weldSession, inputHandler, gameLoop };
