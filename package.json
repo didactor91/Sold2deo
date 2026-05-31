@@ -1,0 +1,27 @@
+{
+  "name": "sold2deo",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Weld Master — Side-View Welding Simulator + Idle Factory",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "lint": "eslint src/ server/src/ --ext .js",
+    "lint:fix": "eslint src/ server/src/ --ext .js --fix",
+    "format": "prettier --write src/ server/src/",
+    "format:check": "prettier --check src/ server/src/",
+    "serve": "npx serve public/ -l 3000",
+    "build": "esbuild src/main.js --bundle --outfile=public/bundle.js --minify"
+  },
+  "devDependencies": {
+    "vitest": "^1.4.0",
+    "@vitest/coverage-v8": "^1.4.0",
+    "playwright": "^1.42.0",
+    "@playwright/test": "^1.42.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.0",
+    "esbuild": "^0.20.0"
+  }
+}
